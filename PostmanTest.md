@@ -36,7 +36,10 @@ Body, raw, JSON
 
      PUT http://localhost:3001/mat/1
      
-     {"nombre": "Programacion"}
-     {"id_carrera": "1"}
+     {
+     "nombre": "Programacion",
+     "id_carrera": 1
+     }
+
 
      DELETE http://localhost:3001/mat/1
