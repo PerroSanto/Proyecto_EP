@@ -3,8 +3,7 @@ var router = express.Router();
 var models = require("../models");
 
 router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.carreras
+  models.carrera
     .findAll({
       attributes: ["id", "nombre"]
     })
@@ -13,9 +12,9 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  models.carreras
+  models.carrera
     .create({ nombre: req.body.nombre })
-    .then(carreras => res.status(201).send({ id: carreras.id }))
+    .then(carrera => res.status(201).send({ id: carrera.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
@@ -28,26 +27,26 @@ router.post("/", (req, res) => {
 });
 
 const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
-  models.carreras
+  models.carrera
     .findOne({
       attributes: ["id", "nombre"],
       where: { id }
     })
-    .then(carreras => (carreras ? onSuccess(carreras) : onNotFound()))
+    .then(carrera => (carrera ? onSuccess(carrera) : onNotFound()))
     .catch(() => onError());
 };
 
 router.get("/:id", (req, res) => {
   findCarrera(req.params.id, {
-    onSuccess: carreras => res.send(carreras),
+    onSuccess: carrera => res.send(carrera),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
 router.put("/:id", (req, res) => {
-  const onSuccess = carreras =>
-  carreras
+  const onSuccess = carrera =>
+    carrera
       .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
@@ -67,8 +66,8 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const onSuccess = carreras =>
-  carreras
+  const onSuccess = carrera =>
+    carrera
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));
