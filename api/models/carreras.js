@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         as : 'Instituto-Relacionado',  // nombre de mi relacion
         foreignKey: 'id_instituto'     // campo con el que voy a igualar
       })
+    ///////////
   };
   return carreras;
 };
