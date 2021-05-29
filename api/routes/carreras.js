@@ -3,18 +3,18 @@ var router = express.Router();
 var models = require("../models");
 
 router.get("/", (req, res) => {
-  models.carrera
+  models.carreras
     .findAll({
-      attributes: ["id", "nombre"]
+      attributes: ["id", "nombre", "id_instituto"],
     })
     .then(carreras => res.send(carreras))
     .catch(() => res.sendStatus(500));
 });
 
 router.post("/", (req, res) => {
-  models.carrera
-    .create({ nombre: req.body.nombre })
-    .then(carrera => res.status(201).send({ id: carrera.id }))
+  models.carreras
+    .create({ nombre: req.body.nombre, id_instituto:req.body.id_instituto })
+    .then(carreras => res.status(201).send({ id: carreras.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
@@ -27,27 +27,27 @@ router.post("/", (req, res) => {
 });
 
 const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
-  models.carrera
+  models.carreras
     .findOne({
-      attributes: ["id", "nombre"],
+      attributes: ["id", "nombre", "id_instituto"],
       where: { id }
     })
-    .then(carrera => (carrera ? onSuccess(carrera) : onNotFound()))
+    .then(carreras => (carreras ? onSuccess(carreras) : onNotFound()))
     .catch(() => onError());
 };
 
 router.get("/:id", (req, res) => {
   findCarrera(req.params.id, {
-    onSuccess: carrera => res.send(carrera),
+    onSuccess: carreras => res.send(carreras),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
 router.put("/:id", (req, res) => {
-  const onSuccess = carrera =>
-    carrera
-      .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+  const onSuccess = carreras =>
+    carreras
+      .update({ nombre: req.body.nombre, id_instituto: req.body.id_instituto }, { fields: ["nombre","id_instituto"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -66,8 +66,8 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const onSuccess = carrera =>
-    carrera
+  const onSuccess = carreras =>
+    carreras
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));

@@ -14,7 +14,9 @@
 
 
 
-     npx sequelize-cli model:generate --name carreras --attributes nombre:string
+     npx sequelize-cli model:generate --name carreras --attributes nombre:string,id_instituto:integer
      npx sequelize-cli model:generate --name materias --attributes nombre:string,id_carrera:integer
+     npx sequelize-cli model:generate --name alumnos --attributes nombre:string,apellido:string,id_carrera:integer
+     npx sequelize-cli model:generate --name institutos --attributes nombre:string
      npx sequelize db:migrate
 
