@@ -4,7 +4,23 @@ var models = require("../models");
 
 router.get("/", (req, res,next) => {
 
-  models.materias.findAndCountAll({attributes: ["id","nombre","id_carrera"],
+  const paginaComoNumero = Number.parseInt(req.query.pagina); /////parsea el parametro a numero
+  const limiteComoNumero = Number.parseInt(req.query.limite);
+
+  let pagina = 0;
+  if(!Number.isNaN(paginaComoNumero) && paginaComoNumero > 0) {
+      pagina = paginaComoNumero;
+  };   ///////asegura que la pagina recibida sea un numero
+
+  let limite = 0;
+  if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
+     limite= limiteComoNumero;
+  };
+
+  models.materias.findAndCountAll({
+    limit: limite,
+    offset: pagina * limite,
+    attributes: ["id","nombre","id_carrera"],
       
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre", "id_instituto"]}]

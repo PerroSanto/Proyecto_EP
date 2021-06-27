@@ -3,8 +3,24 @@ var router = express.Router();
 var models = require("../models");
 
 router.get("/", (req, res) => {
+
+  const paginaComoNumero = Number.parseInt(req.query.pagina); /////parsea el parametro a numero
+  const limiteComoNumero = Number.parseInt(req.query.limite);
+
+  let pagina = 0;
+  if(!Number.isNaN(paginaComoNumero) && paginaComoNumero > 0) {
+      pagina = paginaComoNumero;
+  };   ///////asegura que la pagina recibida sea un numero
+
+  let limite = 0;
+  if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
+     limite= limiteComoNumero;
+  };
+
   models.institutos
     .findAndCountAll({
+      limit: limite,
+      offset: pagina * limite,
       attributes: ["id", "nombre"],
     })
     .then(institutos => res.send(institutos))
