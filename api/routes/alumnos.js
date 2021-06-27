@@ -4,11 +4,29 @@ var models = require("../models");
 
 router.get("/", (req, res,next) => {
 
-  models.alumnos.findAll({attributes: ["id","nombre","apellido","id_carrera"],
+  const paginaComoNumero = Number.parseInt(req.query.pagina); /////parsea el parametro a numero
+  const limiteComoNumero = Number.parseInt(req.query.limite);
+
+  let pagina = 0;
+  if(!Number.isNaN(paginaComoNumero) && paginaComoNumero > 0) {
+      pagina = paginaComoNumero;
+  };   ///////asegura que la pagina recibida sea un numero
+
+  let limite = 0;
+  if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
+     limite= limiteComoNumero;
+  };
+
+  models.alumnos.findAndCountAll({
+
+  limit: limite,
+  offset: pagina * limite,
+  attributes: ["id","nombre","apellido","id_carrera"], 
+       
       
-      /////////se agrega la asociacion 
-      include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre","id_instituto"]}]
-      ////////////////////////////////
+  /////////se agrega la asociacion 
+  include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre","id_instituto"]}]
+  ////////////////////////////////
 
     }).then(alumnos => res.send(alumnos)).catch(error => { return next(error)});
 });
@@ -32,7 +50,10 @@ const findAlumno = (id, { onSuccess, onNotFound, onError }) => {
   models.alumnos
     .findOne({
       attributes: ["id", "nombre", "apellido", "id_carrera"],
-      where: { id }
+      where: { id },
+      /////////se agrega la asociacion 
+      include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre","id_instituto"]}]
+      ////////////////////////////////
     })
     .then(alumnos => (alumnos ? onSuccess(alumnos) : onNotFound()))
     .catch(() => onError());

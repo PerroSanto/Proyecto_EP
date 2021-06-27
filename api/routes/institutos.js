@@ -4,7 +4,7 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   models.institutos
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre"],
     })
     .then(institutos => res.send(institutos))
