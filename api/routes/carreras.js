@@ -4,8 +4,11 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   models.carreras
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre", "id_instituto"],
+      /////////se agrega la asociacion 
+      include:[{as:'Instituto-Relacionado', model:models.institutos, attributes: ["id","nombre"]}]
+      ////////////////////////////////
     })
     .then(carreras => res.send(carreras))
     .catch(() => res.sendStatus(500));
@@ -30,7 +33,10 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
   models.carreras
     .findOne({
       attributes: ["id", "nombre", "id_instituto"],
-      where: { id }
+      where: { id },
+      /////////se agrega la asociacion 
+      include:[{as:'Instituto-Relacionado', model:models.institutos, attributes: ["id","nombre"]}]
+      ////////////////////////////////
     })
     .then(carreras => (carreras ? onSuccess(carreras) : onNotFound()))
     .catch(() => onError());

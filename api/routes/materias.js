@@ -4,7 +4,7 @@ var models = require("../models");
 
 router.get("/", (req, res,next) => {
 
-  models.materias.findAll({attributes: ["id","nombre","id_carrera"],
+  models.materias.findAndCountAll({attributes: ["id","nombre","id_carrera"],
       
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre", "id_instituto"]}]
@@ -32,7 +32,10 @@ const findmateria = (id, { onSuccess, onNotFound, onError }) => {
   models.materias
     .findOne({
       attributes: ["id", "nombre"],
-      where: { id }
+      where: { id },
+      /////////se agrega la asociacion 
+      include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre", "id_instituto"]}]
+      ////////////////////////////////
     })
     .then(materias => (materias ? onSuccess(materias) : onNotFound()))
     .catch(() => onError());
