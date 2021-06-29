@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
       pagina = paginaComoNumero;
   };   ///////asegura que la pagina recibida sea un numero
 
-  let limite = 0;
+  let limite = 30;
   if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
      limite= limiteComoNumero;
   };
@@ -23,7 +23,11 @@ router.get("/", (req, res) => {
       offset: pagina * limite,
       attributes: ["id", "nombre"],
     })
-    .then(institutos => res.send(institutos))
+    //Devolvemos los registros y ademas elcalculo de la cantidad de paginas.
+  .then(institutos => res.send({
+    contenido: institutos.rows,
+    totalPaginas: Math.ceil(institutos.count / limite)
+    }))
     .catch(() => res.sendStatus(500));
 });
 

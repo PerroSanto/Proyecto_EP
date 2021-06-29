@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
       pagina = paginaComoNumero;
   };   ///////asegura que la pagina recibida sea un numero
 
-  let limite = 0;
+  let limite = 30;
   if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
      limite= limiteComoNumero;
   };
@@ -25,9 +25,12 @@ router.get("/", (req, res) => {
       /////////se agrega la asociacion 
       include:[{as:'Instituto-Relacionado', model:models.institutos, attributes: ["id","nombre"]}]
       ////////////////////////////////
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
+    
+    //Devolvemos los registros y ademas elcalculo de la cantidad de paginas.
+    }).then(carreras => res.send({
+      contenido: carreras.rows,
+      totalPaginas: Math.ceil(carreras.count / limite)
+    })).catch(() => res.sendStatus(500));
 });
 
 router.post("/", (req, res) => {

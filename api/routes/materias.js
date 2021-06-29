@@ -12,7 +12,7 @@ router.get("/", (req, res,next) => {
       pagina = paginaComoNumero;
   };   ///////asegura que la pagina recibida sea un numero
 
-  let limite = 0;
+  let limite = 30;
   if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
      limite= limiteComoNumero;
   };
@@ -26,7 +26,12 @@ router.get("/", (req, res,next) => {
       include:[{as:'Carrera-Relacionada', model:models.carreras, attributes: ["id","nombre", "id_instituto"]}]
       ////////////////////////////////
 
-    }).then(materias => res.send(materias)).catch(error => { return next(error)});
+    }).then(materias => res.send({
+      contenido: materias.rows,
+      totalPaginas: Math.ceil(materias.count / limite)
+      }))
+    
+    .catch(error => { return next(error)});
 });
 
 router.post("/", (req, res) => {
