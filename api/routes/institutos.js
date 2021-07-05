@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
   };   ///////asegura que la pagina recibida sea un numero
 
   let limite = 30;
-  if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0 && limiteComoNumero < 10) {
+  if(!Number.isNaN(limiteComoNumero) && limiteComoNumero > 0) {
      limite= limiteComoNumero;
   };
 
