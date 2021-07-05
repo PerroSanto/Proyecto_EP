@@ -65,7 +65,7 @@ router.post("/signin", async (req, res) => {
       res.status(500).send('Usuario o password invalidos')
     }
   }else {
-    res.status(500).send('Debe especificar usuario y password')
+    res.status(500).send('Debe especificar usuario y password validos')
   }
   });
 
