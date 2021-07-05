@@ -12,11 +12,18 @@
      npx sequelize init
      DEBUG=api:* npm start
 
-
-
      npx sequelize-cli model:generate --name carreras --attributes nombre:string,id_instituto:integer
      npx sequelize-cli model:generate --name materias --attributes nombre:string,id_carrera:integer
      npx sequelize-cli model:generate --name alumnos --attributes nombre:string,apellido:string,id_carrera:integer
      npx sequelize-cli model:generate --name institutos --attributes nombre:string
+
+#Instalamos bcypt para el cifrado de la password
+     npm i bcrypt
+     npm i fetch
+
+#Agregamos la migracion para crear la tabla usuarios     
+     npx sequelize-cli model:generate --name usuarios --attributes usuario:string,password:string
      npx sequelize db:migrate
+
+
 
