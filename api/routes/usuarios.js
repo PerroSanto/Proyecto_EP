@@ -24,9 +24,10 @@ router.post("/signup", async (req, res) => {
   const apiJSON = await api.json();
   const usuarioValido = await apiJSON.format_valid
   const smtpValido = await apiJSON.smtp_check
-
+  const minPasswordLength = 6
+console.log(minPasswordLength)
 //Luego de algunas validaciones insertamos el usuario en la tabla o devolvemos un error.
-if (usuarioValido && smtpValido && passwordLength > 6){
+if (usuarioValido && smtpValido && passwordLength >= minPasswordLength){
   models.usuarios
     .create({ 
         usuario: usuario,
