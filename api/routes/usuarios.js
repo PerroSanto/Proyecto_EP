@@ -4,7 +4,6 @@ var models = require("../models");
 var bcrypt = require('bcrypt');
 var fetch = require('node-fetch')
 var jwt = require('jsonwebtoken')
-//const usuarios = require("../models/usuarios");
 require('dotenv').config('./.env');
 const APIkey = process.env.APIKEY;
 const secret = process.env.SECRET;
@@ -64,8 +63,10 @@ router.post("/signin", async (req, res) => {
   if (findUsuario !== null){
     //Si el hash de la password matchea con la que paso el usuario damos ok, sino error.
     if (await bcrypt.compare(password, findUsuario.password)){
+      
+      //Aca se llama a la funcion para generar la apikey
       const accessToken = generateAccessToken(usuario);
-      //res.status(200).send('OK');
+      
       res.header('authotization', accessToken).json({
         message: 'Usuario autenticado',
         token: accessToken

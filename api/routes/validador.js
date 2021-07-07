@@ -4,7 +4,6 @@ const secret = process.env.SECRET;
 
 
 function validateToken(req, res, next){
-    //const secret = 'proyectoedp'
     
     const accessToken = req.body.authorization;
     if(!accessToken) res.send('acceso denegado');
