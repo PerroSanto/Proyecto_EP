@@ -1,8 +1,10 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+//var jwt = require('jsonwebtoken')
+var validador = require("./validador");
 
-router.get("/", (req, res) => {
+router.get("/", validador.validateToken, (req, res, next) => {
 
   const paginaComoNumero = Number.parseInt(req.query.pagina); /////parsea el parametro a numero
   const limiteComoNumero = Number.parseInt(req.query.limite);
@@ -33,7 +35,7 @@ router.get("/", (req, res) => {
     })).catch(() => res.sendStatus(500));
 });
 
-router.post("/", (req, res) => {
+router.post("/", validador.validateToken, (req, res) => {
   models.carreras
     .create({ nombre: req.body.nombre, id_instituto:req.body.id_instituto })
     .then(carreras => res.status(201).send({ id: carreras.id }))
@@ -61,7 +63,7 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validador.validateToken, (req, res) => {
   findCarrera(req.params.id, {
     onSuccess: carreras => res.send(carreras),
     onNotFound: () => res.sendStatus(404),
@@ -69,7 +71,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validador.validateToken, (req, res) => {
   const onSuccess = carreras =>
     carreras
       .update({ nombre: req.body.nombre, id_instituto: req.body.id_instituto }, { fields: ["nombre","id_instituto"] })
@@ -90,7 +92,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validador.validateToken, (req, res) => {
   const onSuccess = carreras =>
     carreras
       .destroy()

@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var validador = require("./validador");
 
-router.get("/", (req, res,next) => {
+router.get("/", validador.validateToken, (req, res,next) => {
 
   const paginaComoNumero = Number.parseInt(req.query.pagina); /////parsea el parametro a numero
   const limiteComoNumero = Number.parseInt(req.query.limite);
@@ -34,7 +35,7 @@ router.get("/", (req, res,next) => {
     .catch(error => { return next(error)});
 });
 
-router.post("/", (req, res) => {
+router.post("/", validador.validateToken, (req, res) => {
   models.materias
     .create({ nombre: req.body.nombre,id_carrera:req.body.id_carrera })
     .then(materias => res.status(201).send({ id: materias.id }))
@@ -62,7 +63,7 @@ const findmateria = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validador.validateToken, (req, res) => {
   findmateria(req.params.id, {
     onSuccess: materias => res.send(materias),
     onNotFound: () => res.sendStatus(404),
@@ -70,7 +71,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validador.validateToken, (req, res) => {
   const onSuccess = materias =>
     materias
       //Metemos esta linea para poder hacer put de nombre o id_carrera, indistintamente.
@@ -93,7 +94,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validador.validateToken, (req, res) => {
   const onSuccess = materias =>
     materias
       .destroy()

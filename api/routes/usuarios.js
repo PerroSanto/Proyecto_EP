@@ -3,7 +3,11 @@ var router = express.Router();
 var models = require("../models");
 var bcrypt = require('bcrypt');
 var fetch = require('node-fetch')
-const usuarios = require("../models/usuarios");
+var jwt = require('jsonwebtoken')
+//const usuarios = require("../models/usuarios");
+require('dotenv').config('./.env');
+const APIkey = process.env.APIKEY;
+const secret = process.env.SECRET;
 
 //Creamos un usuario
 router.post("/signup", async (req, res) => {
@@ -19,13 +23,12 @@ router.post("/signup", async (req, res) => {
   const hashPassword = await bcrypt.hash(password, salt);
 
   //Consultamos la API para validar que el formato y dominio del mail es valido.
-  const APIkey = '582bea147cb424edc08b9909583659aa'
   const api = await fetch (`http://apilayer.net/api/check?access_key=${APIkey}&email=${usuario}`);
   const apiJSON = await api.json();
   const usuarioValido = await apiJSON.format_valid
   const smtpValido = await apiJSON.smtp_check
   const minPasswordLength = 6
-console.log(minPasswordLength)
+
 //Luego de algunas validaciones insertamos el usuario en la tabla o devolvemos un error.
 if (usuarioValido && smtpValido && passwordLength >= minPasswordLength){
   models.usuarios
@@ -61,13 +64,24 @@ router.post("/signin", async (req, res) => {
   if (findUsuario !== null){
     //Si el hash de la password matchea con la que paso el usuario damos ok, sino error.
     if (await bcrypt.compare(password, findUsuario.password)){
-      res.status(200).send('OK');
+      const accessToken = generateAccessToken(usuario);
+      //res.status(200).send('OK');
+      res.header('authotization', accessToken).json({
+        message: 'Usuario autenticado',
+        token: accessToken
+      })
+      console.log(accessToken)
     }else{
       res.status(500).send('Usuario o password invalidos')
     }
   }else {
     res.status(500).send('Debe especificar usuario y password validos')
   }
+
+  function generateAccessToken(usuario){
+    return jwt.sign(usuario, secret);
+  }
+
   });
 
 module.exports = router;

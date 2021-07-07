@@ -25,5 +25,7 @@
      npx sequelize-cli model:generate --name usuarios --attributes usuario:string,password:string
      npx sequelize db:migrate
 
-
-
+#Instalamos JWT
+     npm i jsonwebtoken
+     npm i moment
+     npm i dotenv
